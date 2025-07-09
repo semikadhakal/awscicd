@@ -86,7 +86,7 @@ jobs:
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       - name: Save Frontend Docker Image as tar
         run: |
-          docker save -o frontend-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }}
+          docker save -o frontend-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }}
       - name: Upload Frontend Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -135,7 +135,7 @@ jobs:
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       - name: Save Backend1 Docker Image as tar
         run: |
-          docker save -o backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }}
+          docker save -o backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKER_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }}
       - name: Upload Backend1 Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -143,7 +143,7 @@ jobs:
           path: backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar
       - name: Save Backend2 Docker Image as tar
         run: |
-          docker save -o backend2-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }}
+          docker save -o backend2-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }}
       - name: Upload Backend2 Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
