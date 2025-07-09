@@ -42,5 +42,5 @@ services:
     networks:
       - semika-network
 networks:
-  aryan-network:
+  semika-network:
     driver: bridge
