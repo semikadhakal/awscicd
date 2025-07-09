@@ -95,7 +95,7 @@ const SingleBlog: React.FC = () => {
       <Box sx={{ minHeight: "100vh", bgcolor: "#f5f5f5" }}>
         {Header}
         <Container maxWidth="md" sx={{ mt: 4 }}>
-          <Alert severity="warning">Blog not found</Alert>
+          <Alert severity="warning">Blog not found haha</Alert>
         </Container>
       </Box>
     );
