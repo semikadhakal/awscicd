@@ -80,7 +80,7 @@ jobs:
             --cache-to=type=local,dest=/tmp/.buildx-cache-new \
             --load \
             -t ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }} ./frontend
-          docker tag ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKER_USERNAME }}/frontend:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }}
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
@@ -113,7 +113,7 @@ jobs:
             --cache-to=type=local,dest=/tmp/.buildx-cache-new \
             --load \
             -t ${{ secrets.DOCKER_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }} ./backend1
-          docker tag ${{ secrets.DOCKER_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKERHUB_USERNAME }}/backend1:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKER_USERNAME }}/backend1:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }}
           docker push ${{ secrets.DOCKER_USERNAME }}/backend1:latest
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
@@ -126,7 +126,7 @@ jobs:
             --cache-to=type=local,dest=/tmp/.buildx-cache-new \
             --load \
             -t ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }} ./backend2
-          docker tag ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKERHUB_USERNAME }}/backend2:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }} ${{ secrets.DOCKER_USERNAME }}/backend2:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }}
           docker push ${{ secrets.DOCKER_USERNAME }}/backend2:latest
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
