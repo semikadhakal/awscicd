@@ -197,7 +197,8 @@ jobs:
           git config user.name "semika dhakal"
           git config user.email "semikadhakal1@gmail.com"
           git add .
-          git commit -m "update: new frontend build with scan report"
+          git diff --cached --quiet || git commit -m "Update scan report"
+          # git commit -m "update: new frontend build with scan report"
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git main
 
 
