@@ -207,7 +207,7 @@ jobs:
 
   docker-deployment:
     runs-on: frontend
-    needs: [docker-build-push-frontend, docker-build-push-backend]
+    needs: [docker-build-push-frontend, docker-build-push-backend, security-scan]
     steps:
       - uses: actions/checkout@v4
       - name: Log in to Docker Hub
