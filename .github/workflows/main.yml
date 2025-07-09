@@ -150,9 +150,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Transfer docker-compose.yml to EC2
+      - name: Transfer docker-compose.yaml to EC2
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
+          scp -o StrictHostKeyChecking=no docker-compose.yaml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
       - name: SSH and Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
