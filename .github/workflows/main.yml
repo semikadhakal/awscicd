@@ -84,11 +84,14 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }}
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-      - name: Upload Frontend Build Artifacts
+      - name: Save Frontend Docker Image as tar
+        run: |
+          docker save -o frontend-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ needs.version-and-tag.outputs.new_tag }}
+      - name: Upload Frontend Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-dist-${{ github.sha }}
-          path: ./frontend/dist/
+          name: frontend-${{ needs.version-and-tag.outputs.new_tag }}.tar
+          path: frontend-${{ needs.version-and-tag.outputs.new_tag }}.tar
   docker-build-push-backend:
     runs-on: backend
     needs: [version-and-tag, docker-build-push-frontend]
@@ -130,16 +133,78 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }}
           docker push ${{ secrets.DOCKER_USERNAME }}/backend2:latest
           rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-      - name: Upload Backend1 Build Artifacts
+      - name: Save Backend1 Docker Image as tar
+        run: |
+          docker save -o backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/backend1:${{ needs.version-and-tag.outputs.new_tag }}
+      - name: Upload Backend1 Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend1-dist-${{ github.sha }}
-          path: ./backend1/dist/
-      - name: Upload Backend2 Build Artifacts
+          name: backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar
+          path: backend1-${{ needs.version-and-tag.outputs.new_tag }}.tar
+      - name: Save Backend2 Docker Image as tar
+        run: |
+          docker save -o backend2-${{ needs.version-and-tag.outputs.new_tag }}.tar ${{ secrets.DOCKERHUB_USERNAME }}/backend2:${{ needs.version-and-tag.outputs.new_tag }}
+      - name: Upload Backend2 Docker Image tar Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend2-dist-${{ github.sha }}
-          path: ./backend2/dist/
+          name: backend2-${{ needs.version-and-tag.outputs.new_tag }}.tar
+          path: backend2-${{ needs.version-and-tag.outputs.new_tag }}.tar
+  security-scan:
+    runs-on: frontend
+    needs: [docker-build-push-frontend, docker-build-push-backend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Trivy Installation
+        run: trivy --version
+
+      - name: Run Trivy scan on frontend image
+        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+
+      - name: Run Trivy scan on backend1 image
+        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
+
+      - name: Run Trivy scan on backend2 image
+        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output backend2-scan.html ${{ secrets.DOCKER_USERNAME }}/backend2:latest
+
+      - name: Merge scan reports into a single HTML file
+        run: |
+          echo "<html><head><title>Trivy Scan Reports</title></head><body>" > index.html
+          echo "<h1>Frontend Scan Report</h1>" >> index.html
+          cat frontend-scan.html >> index.html
+          echo "<hr><h1>Backend1 Scan Report</h1>" >> index.html
+          cat backend1-scan.html >> index.html
+          echo "<hr><h1>Backend2 Scan Report</h1>" >> index.html
+          cat backend2-scan.html >> index.html
+          echo "</body></html>" >> index.html
+
+      - name: Place merged scan report in public/scan
+        run: |
+          mkdir -p frontend/public/scan
+          mv index.html frontend/public/scan/index.html
+
+      - name: Build the React app
+        working-directory: ./frontend
+        run: |
+          yarn install
+          yarn build
+
+      - name: Deploy dist to separate GitHub Pages repo
+        run: |
+          cd frontend
+          git clone --branch main https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git
+
+          # Clear old content and copy new build
+          rm -rf trivy-pages/*
+          cp -r dist/* trivy-pages/
+
+          cd trivy-pages
+          git config user.name "semika dhakal"
+          git config user.email "semikadhakal1@gmail.com""
+          git add .
+          git commit -m "update: new frontend build with scan report"
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git main
+
   docker-deployment:
     runs-on: frontend
     needs: [docker-build-push-frontend, docker-build-push-backend]
