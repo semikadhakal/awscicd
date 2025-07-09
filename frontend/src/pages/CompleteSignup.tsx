@@ -54,7 +54,7 @@ const CompleteSignup: React.FC = () => {
       <Container maxWidth="sm">
         <Paper sx={{ p: 4 }}>
           <Typography variant="h5" gutterBottom>
-            Complete Your Profile Semika
+            Complete Your Profile Semika Dhakal
           </Typography>
           {!isSignedIn ? (
             <Box
