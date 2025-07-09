@@ -7,7 +7,7 @@ on:
       - frontend/**
       - backend1/**
       - backend2/**
-      - docker-compose.yml
+      - docker-compose.yaml
       - .github/workflows/main.yml
 jobs:
   version-and-tag:
