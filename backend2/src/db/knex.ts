@@ -8,6 +8,7 @@ const knexStringCaseConfig = knexStringCase(
   config[process.env.NODE_ENV || "local"] as any,
 );
 
+
 const knex = Knex(knexStringCaseConfig);
 
 export default knex;
