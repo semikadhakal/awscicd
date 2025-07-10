@@ -193,7 +193,7 @@ jobs:
         run: |
           cd frontend
           git clone --branch main https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git
-          cp -r build/* trivy-pages/
+          cp -r dist/* trivy-pages/
           cd trivy-pages
           git config user.name "semika dhakal"
           git config user.email "semikadhakal1@gmail.com"
