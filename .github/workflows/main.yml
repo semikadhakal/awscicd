@@ -168,14 +168,14 @@ jobs:
           curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o .trivy/trivy-html.tpl
 
       - name: Run Trivy scan on frontend image
-        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+        run: trivy image --format template --template @".trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
   
 
       - name: Run Trivy scan on backend1 image
-        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
+        run: trivy image --format template --template @".trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
 
       - name: Run Trivy scan on backend2 image
-        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output backend2-scan.html ${{ secrets.DOCKER_USERNAME }}/backend2:latest
+        run: trivy image --format template --template @".trivy/trivy-html.tpl" --output backend2-scan.html ${{ secrets.DOCKER_USERNAME }}/backend2:latest
 
       - name: Merge scan reports into a single HTML file
         run: |
