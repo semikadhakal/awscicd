@@ -155,33 +155,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify Trivy Installation
-        run: trivy --version
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Download Trivy HTML template
+        run: |
+          mkdir -p .trivy
+          curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o .trivy/trivy-html.tpl
 
       - name: Run Trivy scan on frontend image
-        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
       - name: Run Trivy scan on backend1 image
-        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
+        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
 
       - name: Run Trivy scan on backend2 image
-        run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output backend2-scan.html ${{ secrets.DOCKER_USERNAME }}/backend2:latest
+        run: trivy image --format template --template ".trivy/trivy-html.tpl" --output backend2-scan.html ${{ secrets.DOCKER_USERNAME }}/backend2:latest
 
       - name: Merge scan reports into a single HTML file
         run: |
-          echo "<html><head><title>Trivy Scan Reports</title></head><body>" > index.html
-          echo "<h1>Frontend Scan Report</h1>" >> index.html
-          cat frontend-scan.html >> index.html
-          echo "<hr><h1>Backend1 Scan Report</h1>" >> index.html
-          cat backend1-scan.html >> index.html
-          echo "<hr><h1>Backend2 Scan Report</h1>" >> index.html
-          cat backend2-scan.html >> index.html
-          echo "</body></html>" >> index.html
+          echo '<html><head><title>Trivy Reports</title><style>iframe{width:100%;height:600px;border:none;}</style></head><body>' > index.html
+          echo '<h1>Frontend Report</h1><iframe src="frontend-scan.html"></iframe>' >> index.html
+          echo '<h1>Backend1 Report</h1><iframe src="backend1-scan.html"></iframe>' >> index.html
+          echo '<h1>Backend2 Report</h1><iframe src="backend2-scan.html"></iframe>' >> index.html
+          echo '</body></html>' >> index.html
 
-      - name: Place merged scan report in public/scan
+      - name: Prepare scan report folder
         run: |
           mkdir -p frontend/public/scan
-          mv index.html frontend/public/scan/index.html
+          mv index.html frontend/public/scan/
+          mv frontend-scan.html backend1-scan.html backend2-scan.html frontend/public/scan/
 
       - name: Build the React app
         working-directory: ./frontend
@@ -189,18 +193,19 @@ jobs:
           yarn install
           yarn build
 
-      - name: Deploy dist to separate GitHub Pages repo
+      - name: Deploy to GitHub Pages repo
         run: |
           cd frontend
           git clone --branch main https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git
           cp -r dist/* trivy-pages/
+          cp -r public/scan trivy-pages/
           cd trivy-pages
           git config user.name "semika dhakal"
           git config user.email "semikadhakal1@gmail.com"
           git add .
           git diff --cached --quiet || git commit -m "Update scan report"
-          # git commit -m "update: new frontend build with scan report"
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/semikadhakal/trivy-pages.git main
+
 
 
   docker-deployment:
