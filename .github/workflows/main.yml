@@ -169,6 +169,7 @@ jobs:
 
       - name: Run Trivy scan on frontend image
         run: trivy image --format template --template ".trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+  
 
       - name: Run Trivy scan on backend1 image
         run: trivy image --format template --template ".trivy/trivy-html.tpl" --output backend1-scan.html ${{ secrets.DOCKER_USERNAME }}/backend1:latest
