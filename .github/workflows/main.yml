@@ -158,8 +158,6 @@ jobs:
       - name: Verify Trivy Installation
         run: trivy --version
 
-        '@.trivy/templates/html.tpl'
-
       - name: Run Trivy scan on frontend image
         run: trivy image --format template --template "/home/ubuntu/trivy/trivy-html.tpl" --output frontend-scan.html ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
