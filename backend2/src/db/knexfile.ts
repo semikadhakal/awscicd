@@ -13,7 +13,7 @@ const config: { [key: string]: Knex.Config } = {
       host: process.env.DB_HOST,
       password: process.env.DB_PASSWORD,
       port: parseInt(process.env.DB_PORT || '5432', 10),
-      ssl: false,
+      ssl: { rejectUnauthorized: false },
     },
     pool: { min: 2, max: 10 },
     migrations: {
