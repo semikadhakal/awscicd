@@ -231,7 +231,7 @@ const CreateBlog: React.FC = () => {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "calc(100vh - 64px)", // 64px is default AppBar height
+                    height: "calc(100vh - 64px)",
                     display: "flex",
                     flexDirection: { xs: "column", md: "row" },
                     gap: 0,
